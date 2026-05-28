@@ -1,3 +1,23 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   A local development runner for the Nathan Webb agent. Lets you trigger a
+#   full document review from the terminal without spinning up the FastAPI
+#   server or deploying to AgentCore. Includes a built-in sample memo that
+#   deliberately violates the 6-pager standard (vague language, no data,
+#   no customer specificity) so you can see Nathan's critique immediately.
+#
+# Technologies used:
+#   - Strands Agents SDK — agent invocation (via src/agent.py helpers)
+#   - Amazon Bedrock — LLM backend (requires AWS credentials in environment)
+#   - Python stdlib: sys, os
+#
+# Example of what this file does:
+#   `python test_local.py` feeds the built-in "Project Titan" memo to Nathan.
+#   He calls analyze_document_structure (finds 7 vague words, 0 citations),
+#   calls check_customer_obsession (MISSING on 4 of 5 categories), then
+#   prints a full structured review ending with Verdict: "Send it back."
+#   `python test_local.py my_proposal.pdf` does the same for your own file.
+# -----------------------------------------------------------------------------
 """
 Local test: run Nathan Webb's review on a sample document without deploying.
 

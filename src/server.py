@@ -1,3 +1,28 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   A FastAPI HTTP server that wraps the Nathan Webb agent and exposes it
+#   through the two endpoints Amazon Bedrock AgentCore requires:
+#     GET  /ping         — health check (AgentCore polls this before routing)
+#     POST /invocations  — main entry point; accepts a document or free-form
+#                          prompt and returns Nathan's review
+#   Supports both blocking JSON responses and streaming via Server-Sent Events.
+#
+# Technologies used:
+#   - FastAPI — async HTTP framework
+#   - Uvicorn — ASGI server (started via CMD in Dockerfile)
+#   - Strands Agents SDK — agent invocation and streaming
+#   - Amazon Bedrock AgentCore — managed container runtime that calls /ping
+#     and /invocations once the image is deployed
+#   - Python stdlib: json, logging, os
+#
+# Example of what this file does:
+#   AgentCore POSTs {"documentText": "Our Q3 plan...", "stream": true} to
+#   /invocations. The server builds the Nathan Webb prompt, calls the agent,
+#   and streams back Server-Sent Events:
+#     data: {"sessionId": "abc", "chunk": "This memo has seven vague words..."}
+#     data: {"sessionId": "abc", "chunk": " Verdict: Send it back."}
+#     data: [DONE]
+# -----------------------------------------------------------------------------
 """
 AgentCore-compatible HTTP server for the Nathan Webb Doc Review Agent.
 

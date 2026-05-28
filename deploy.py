@@ -1,3 +1,26 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   A self-contained deployment script that takes the project from local code
+#   to a running Amazon Bedrock AgentCore endpoint in one command. It handles
+#   every AWS resource the agent needs: ECR repo, Docker build+push, IAM
+#   execution role, and the AgentCore agent runtime itself.
+#
+# Technologies used:
+#   - Docker (CLI via subprocess) — builds and tags the container image
+#   - Amazon ECR — stores the Docker image in AWS
+#   - AWS IAM — creates a least-privilege execution role for AgentCore
+#   - Amazon Bedrock AgentCore (bedrock-agentcore-control boto3 client) —
+#     creates the managed agent runtime that serves /invocations traffic
+#   - boto3 / botocore — all AWS API calls
+#   - Python stdlib: argparse, json, subprocess, sys, time
+#
+# Example of what this file does:
+#   Running `python deploy.py --region us-east-1 --account-id 123456789012`
+#   builds the Docker image, pushes it to ECR at
+#   123456789012.dkr.ecr.us-east-1.amazonaws.com/nathan-webb-doc-review:latest,
+#   creates the NathanWebbAgentCoreRole IAM role with Bedrock + ECR policies,
+#   then calls create_agent_runtime and prints the live HTTPS endpoint.
+# -----------------------------------------------------------------------------
 """
 Deploy the Nathan Webb Doc Review Agent to Amazon Bedrock AgentCore.
 

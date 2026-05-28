@@ -1,3 +1,24 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   Container definition for the Nathan Webb Doc Review Agent. Produces a
+#   minimal Python 3.11 image that runs the FastAPI server on port 8080 —
+#   the port Amazon Bedrock AgentCore requires for all agent containers.
+#
+# Technologies used:
+#   - Docker / Amazon ECR base image (python:3.11-slim from ECR Public Gallery)
+#   - Uvicorn — ASGI server started at container launch via CMD
+#   - gcc — system build dep needed by some Python packages (e.g. uvloop)
+#   - AgentCore HEALTHCHECK — Docker polls /ping every 30s; AgentCore will
+#     not route traffic until the check passes
+#
+# Example of what this file does:
+#   `docker build -t nathan-webb .` produces a ~200 MB image.
+#   `docker run -p 8080:8080 -e AWS_REGION=us-east-1 nathan-webb` starts
+#   the server locally. Hitting POST localhost:8080/invocations with a JSON
+#   body returns Nathan Webb's document review, identical to the AgentCore
+#   hosted version.
+# -----------------------------------------------------------------------------
+
 FROM public.ecr.aws/docker/library/python:3.11-slim
 
 # AgentCore requires the container to listen on port 8080

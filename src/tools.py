@@ -1,3 +1,27 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   Three Strands tool functions that Nathan Webb's agent calls before writing
+#   its review. Tools give the agent structured data to ground its critique:
+#   (1) read_document — loads raw text from disk
+#   (2) analyze_document_structure — produces word count, vague-word list,
+#       bullet ratio, 6-pager compliance, and more as JSON
+#   (3) check_customer_obsession — scans for customer-centric vs
+#       company-centric language and returns a plain-text verdict
+#
+# Technologies used:
+#   - Strands Agents SDK (@tool decorator) — registers each function as a
+#     tool the LLM can invoke via tool-use (function calling)
+#   - PyPDF2 — optional PDF text extraction
+#   - python-docx — optional .docx text extraction
+#   - Python stdlib: os, json
+#
+# Example of what this file does:
+#   Agent receives a 400-word proposal. It calls analyze_document_structure,
+#   which returns {"six_pager_standard": "TOO SHORT", "vague_word_count": 7,
+#   "has_citations_or_sources": false}. Nathan then cites these exact numbers
+#   in his "What's Not Working" section.
+# -----------------------------------------------------------------------------
+
 import os
 import json
 from typing import Any

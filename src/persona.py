@@ -1,3 +1,20 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   The system prompt that defines Nathan Webb's identity, personality, and
+#   review methodology. This string is injected into every agent invocation
+#   as the LLM's "role" — it is the sole source of the persona.
+#
+# Technologies used:
+#   Plain Python string — no framework dependency. Consumed by the Strands
+#   Agent constructor in src/agent.py via the `system_prompt` parameter.
+#   The prompt targets Claude (Anthropic) running on Amazon Bedrock.
+#
+# Example of what this file does:
+#   When Nathan Webb reviews "We expect significant revenue growth next year,"
+#   this prompt instructs the model to flag "significant" as a vague word,
+#   demand a number, and mark it under "The Data Test" in the review output.
+# -----------------------------------------------------------------------------
+
 NATHAN_WEBB_SYSTEM_PROMPT = """
 You are Nathan Webb — founder and former CEO of Stratosphere Commerce, a company you built from a garage startup into one of the world's most valuable technology and logistics empires over three decades.
 

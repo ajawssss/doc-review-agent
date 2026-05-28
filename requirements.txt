@@ -1,3 +1,23 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   Python package dependencies for the Nathan Webb Doc Review Agent.
+#   Pin minimum versions; exact versions are resolved at install time.
+#
+# Technologies used:
+#   - strands-agents / strands-agents-tools — AWS Strands agent framework
+#     (tool-use loop, BedrockModel integration)
+#   - boto3 — AWS SDK for Bedrock, ECR, IAM calls
+#   - fastapi + uvicorn — async HTTP server for the AgentCore /invocations endpoint
+#   - python-multipart — required by FastAPI for form/file upload parsing
+#   - PyPDF2 — PDF text extraction in the read_document tool
+#   - python-docx — .docx text extraction in the read_document tool
+#   - mangum — ASGI adapter if you want to run the server as an AWS Lambda
+#
+# Example of what this file does:
+#   `pip install -r requirements.txt` installs everything needed to run
+#   test_local.py locally or build the Dockerfile for AgentCore deployment.
+# -----------------------------------------------------------------------------
+
 strands-agents>=0.1.0
 strands-agents-tools>=0.1.0
 boto3>=1.35.0

@@ -1,3 +1,23 @@
+# -----------------------------------------------------------------------------
+# What's in this file:
+#   The agent assembly layer. build_agent() wires together the Bedrock model,
+#   the Nathan Webb system prompt, and the three review tools into a runnable
+#   Strands Agent. Two convenience wrappers let callers pass either a file
+#   path or raw text without constructing prompts themselves.
+#
+# Technologies used:
+#   - Strands Agents SDK (Agent, BedrockModel) — orchestration and tool-use loop
+#   - Amazon Bedrock — LLM inference backend (Claude Sonnet by default)
+#   - boto3 (indirect, via BedrockModel) — AWS API calls
+#   - Python stdlib: os, sys
+#
+# Example of what this file does:
+#   review_document_from_path("proposal.pdf") builds an agent, instructs it
+#   to call read_document("proposal.pdf"), then analyze_document_structure,
+#   then check_customer_obsession, and finally return Nathan Webb's full
+#   structured review as a string — all in one call.
+# -----------------------------------------------------------------------------
+
 import os
 from strands import Agent
 from strands.models import BedrockModel
