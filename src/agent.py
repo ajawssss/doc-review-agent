@@ -1,71 +1,39 @@
-# -----------------------------------------------------------------------------
-# What's in this file:
-#   The agent assembly layer. build_agent() wires together the Bedrock model,
-#   the Nathan Webb system prompt, and the three review tools into a runnable
-#   Strands Agent. Two convenience wrappers let callers pass either a file
-#   path or raw text without constructing prompts themselves.
-#
-# Technologies used:
-#   - Strands Agents SDK (Agent, BedrockModel) — orchestration and tool-use loop
-#   - Amazon Bedrock — LLM inference backend (Claude Sonnet by default)
-#   - boto3 (indirect, via BedrockModel) — AWS API calls
-#   - Python stdlib: os, sys
-#
-# Example of what this file does:
-#   review_document_from_path("proposal.pdf") builds an agent, instructs it
-#   to call read_document("proposal.pdf"), then analyze_document_structure,
-#   then check_customer_obsession, and finally return Nathan Webb's full
-#   structured review as a string — all in one call.
-# -----------------------------------------------------------------------------
-
 import os
 from strands import Agent
 from strands.models import BedrockModel
 
-from src.persona import NATHAN_WEBB_SYSTEM_PROMPT
-from src.tools import read_document, analyze_document_structure, check_customer_obsession
+from src.persona import JORDAN_BLAKE_SYSTEM_PROMPT
+from src.tools import read_document, analyze_marketing_content, score_document
 
 
 def build_agent() -> Agent:
-    """Construct and return the Nathan Webb doc-review agent."""
     model = BedrockModel(
         model_id=os.environ.get("BEDROCK_MODEL_ID", "us.anthropic.claude-sonnet-4-5-20251001-v2:0"),
         region_name=os.environ.get("AWS_REGION", "us-east-1"),
         streaming=True,
         max_tokens=8192,
-        temperature=0.3,   # precise, consistent — Nathan does not ramble
+        temperature=0.3,
     )
 
-    agent = Agent(
+    return Agent(
         model=model,
-        system_prompt=NATHAN_WEBB_SYSTEM_PROMPT,
-        tools=[read_document, analyze_document_structure, check_customer_obsession],
+        system_prompt=JORDAN_BLAKE_SYSTEM_PROMPT,
+        tools=[read_document, analyze_marketing_content, score_document],
         load_tools_from_directory=False,
     )
 
-    return agent
-
 
 def review_document_from_path(file_path: str) -> str:
-    """
-    High-level helper: read a file and ask Nathan Webb to review it.
-    Returns the full review as a string.
-    """
     agent = build_agent()
     prompt = (
-        f"Please review the document at this path: {file_path}\n\n"
-        "Use your tools to read the document, analyze its structure, and check its customer focus. "
-        "Then deliver your full Nathan Webb document review."
+        f"Please review the marketing document at this path: {file_path}\n\n"
+        "Use your tools to read the document, analyze its marketing content, and score it. "
+        "Then deliver your full Jordan Blake review."
     )
-    result = agent(prompt)
-    return str(result)
+    return str(agent(prompt))
 
 
 def review_document_from_text(document_text: str, title: str = "Untitled Document") -> str:
-    """
-    High-level helper: review document text directly (no file needed).
-    Returns the full review as a string.
-    """
     agent = build_agent()
     prompt = (
         f"I am submitting a document titled '{title}' for your review.\n\n"
@@ -73,11 +41,10 @@ def review_document_from_text(document_text: str, title: str = "Untitled Documen
         f"{'='*60}\n"
         f"{document_text}\n"
         f"{'='*60}\n\n"
-        "Use your analyze_document_structure and check_customer_obsession tools on this text, "
-        "then deliver your full Nathan Webb document review."
+        "Use your analyze_marketing_content and score_document tools on this text, "
+        "then deliver your full Jordan Blake marketing review."
     )
-    result = agent(prompt)
-    return str(result)
+    return str(agent(prompt))
 
 
 if __name__ == "__main__":

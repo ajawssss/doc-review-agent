@@ -1,63 +1,41 @@
-# -----------------------------------------------------------------------------
-# What's in this file:
-#   A local development runner for the Nathan Webb agent. Lets you trigger a
-#   full document review from the terminal without spinning up the FastAPI
-#   server or deploying to AgentCore. Includes a built-in sample memo that
-#   deliberately violates the 6-pager standard (vague language, no data,
-#   no customer specificity) so you can see Nathan's critique immediately.
-#
-# Technologies used:
-#   - Strands Agents SDK — agent invocation (via src/agent.py helpers)
-#   - Amazon Bedrock — LLM backend (requires AWS credentials in environment)
-#   - Python stdlib: sys, os
-#
-# Example of what this file does:
-#   `python test_local.py` feeds the built-in "Project Titan" memo to Nathan.
-#   He calls analyze_document_structure (finds 7 vague words, 0 citations),
-#   calls check_customer_obsession (MISSING on 4 of 5 categories), then
-#   prints a full structured review ending with Verdict: "Send it back."
-#   `python test_local.py my_proposal.pdf` does the same for your own file.
-# -----------------------------------------------------------------------------
 """
-Local test: run Nathan Webb's review on a sample document without deploying.
+Local test: run Jordan Blake's review on a sample document without deploying.
 
 Usage:
-    python test_local.py                     # reviews the built-in sample memo
+    python test_local.py                     # reviews the built-in sample blog post
     python test_local.py path/to/your/doc.txt
 """
 
 import sys
 import os
 
-# Make sure src/ is importable
 sys.path.insert(0, os.path.dirname(__file__))
 
-SAMPLE_MEMO = """
-Project Titan: Expanding into Same-Day Grocery Delivery
+# A deliberately mediocre AWS AI product blog post — buzzword-heavy,
+# no CTA, wrong product name, company-centric framing.
+SAMPLE_BLOG_POST = """
+Revolutionizing AI with AWS: Our Next-Generation Approach
 
-Executive Summary
-We believe there is a significant opportunity to leverage our existing logistics
-infrastructure to substantially improve our grocery delivery offering. This initiative
-will enhance customer satisfaction and drive revenue growth.
+At Amazon Web Services, we are excited to announce our cutting-edge AI capabilities
+that will revolutionize how enterprises leverage artificial intelligence. Our world-class
+team has built a groundbreaking suite of tools that will transform your business.
 
-Background
-Over the past several years, the grocery delivery market has seen substantial growth.
-Many customers are interested in same-day delivery options. Our competitors have
-various programs in this space and we need to respond to remain competitive.
+AWS Tranium chips offer next-generation performance for AI training workloads. Our
+state-of-the-art Nova AI models are now available, providing seamless integration
+with your existing systems. We believe this represents a significant leap forward
+in enterprise AI capabilities.
 
-Proposal
-We propose to expand our same-day grocery delivery to 50 new cities by Q3. This
-will require investment in temperature-controlled vehicles and warehouse improvements.
-The team believes this will significantly improve our market position.
+Our robust platform enables organizations to streamline their AI initiatives and
+leverage synergies across their technology stack. The solution is scalable and
+best-in-class, ensuring enterprise-grade reliability.
 
-Financials
-We estimate the investment will be around $200M. Returns should be positive within
-18-24 months. The exact figures are still being finalized by the finance team.
+We have worked hard to build these capabilities and our team is proud of what we
+have achieved. AWS Bedrock AI provides access to foundational models from leading
+providers. We think customers will find this valuable.
 
-Conclusion
-Same-day grocery delivery is a large opportunity. We should move quickly to capture
-market share before our competitors further entrench themselves. The team is excited
-about this initiative and ready to execute.
+The technology is very advanced and uses sophisticated algorithms to improve
+outcomes substantially. Results will be enhanced significantly across various
+use cases. Our goal is to be the industry leader in AI.
 """
 
 
@@ -68,18 +46,18 @@ def main():
         from src.agent import review_document_from_path
         review = review_document_from_path(file_path)
     else:
-        print("No file provided — using built-in sample memo.\n")
+        print("No file provided — using built-in sample blog post.\n")
         print("=" * 60)
         print("DOCUMENT SUBMITTED FOR REVIEW:")
         print("=" * 60)
-        print(SAMPLE_MEMO)
+        print(SAMPLE_BLOG_POST)
         print("=" * 60 + "\n")
 
         from src.agent import review_document_from_text
-        review = review_document_from_text(SAMPLE_MEMO, title="Project Titan Memo")
+        review = review_document_from_text(SAMPLE_BLOG_POST, title="AWS AI Blog Post Draft")
 
     print("\n" + "=" * 60)
-    print("NATHAN WEBB'S REVIEW:")
+    print("JORDAN BLAKE'S REVIEW:")
     print("=" * 60)
     print(review)
 
